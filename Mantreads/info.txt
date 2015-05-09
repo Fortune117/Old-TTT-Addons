@@ -1,0 +1,6 @@
+"AddonInfo"
+{
+	"name" "TTT Energy Shield"
+	"author_name" "Fortune"
+	"info" ""
+}

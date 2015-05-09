@@ -1,0 +1,99 @@
+/*
+	Please Double check you have MySQL and mysqloo modules are installed.
+	You can get mysqloo module at here. http://facepunch.com/showthread.php?t=1220537
+	You should have database called ' 3dcardealer '. if not, make it
+	
+	And also you need datatable called ' cardealer_inventory '. if not make it with this code.
+	
+DROP TABLE IF EXISTS `Cardealer_Inventory`;
+CREATE TABLE `Cardealer_Inventory` (
+ `ID` char(64) NOT NULL,
+ `JSONData` text NOT NULL,
+ PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1
+
+*/
+
+
+
+
+
+
+
+-- MySQLoo
+require( "mysqloo" )
+local mysql_hostname = '127.0.0.1' -- Your MySQL server address.
+local mysql_username = 'root' -- Your MySQL username.
+local mysql_password = 'apmsetup' -- Your MySQL password.
+local mysql_database = '3dcardealer' -- Your MySQL database.
+local mysql_port = 3306 -- Your MySQL port. Most likely is 3306.
+
+local db = mysqloo.connect(mysql_hostname, mysql_username, mysql_password, mysql_database, mysql_port)
+db:connect()
+
+function RXCar_Provider_GetSQL()
+	return db
+end
+
+function RXCar_Provider_GetInventory(PlySID,CallBackfunc)
+	PlySID = string.gsub(PlySID,"_",":")
+
+	local q = db:query( "SELECT * FROM cardealer_inventory WHERE ID = '" .. PlySID .."'" ) -- µ¥ÀÌÅÍ »ðÀÔ
+	function q:onSuccess(data)
+		if data and data[1] then
+			CallBackfunc(util.JSONToTable(data[1].JSONData))
+		else
+			CallBackfunc({})
+		end
+	end
+	function q:onError(err, sql)
+		MsgN('3D Car dealer 2 : There is error on MySQL Module')
+	end
+	q:start()
+end
+
+function RXCar_Provider_SaveInventory(PlySID,InventoryData,CallBackfunc)
+	PlySID = string.gsub(PlySID,"_",":")
+
+	-- Existing Check
+	local q = db:query( "SELECT * FROM cardealer_inventory WHERE ID = '" .. PlySID .."'" ) -- µ¥ÀÌÅÍ »ðÀÔ
+	function q:onSuccess(data)
+		if data and data[1] then
+			-- HAS DATA
+			local QUERY = "UPDATE "
+			QUERY = QUERY .. "cardealer_inventory "
+			QUERY = QUERY .. "SET JSONData = '" .. util.TableToJSON(InventoryData) .."'"
+			QUERY = QUERY .. " WHERE ID = '" .. PlySID .. "'"
+			
+			local q = db:query( QUERY ) -- µ¥ÀÌÅÍ »ðÀÔ
+			function q:onError(err, sql)
+				MsgN('3D Car dealer 2 : There is error on MySQL Module')
+			end
+			function q:onSuccess()
+				CallBackfunc(InventoryData)
+			end
+			q:start()
+		else
+			local QUERY = "INSERT INTO "
+			QUERY = QUERY .. "cardealer_inventory "
+			QUERY = QUERY .. "(`ID`,`JSONData`) "
+			QUERY = QUERY .. "VALUES ('"..PlySID.."' ,'"..util.TableToJSON( InventoryData ).."')"
+			local q = db:query( QUERY ) -- µ¥ÀÌÅÍ »ðÀÔ
+			function q:onSuccess(data)
+				CallBackfunc(InventoryData)
+			end
+			function q:onError(err, sql)
+				MsgN('3D Car dealer 2 : There is error on MySQL Module')
+			end
+			q:start()
+			
+		end
+	end
+	function q:onError(err, sql)
+		MsgN('3D Car dealer 2 : There is error on MySQL Module')
+	end
+	q:start()
+	
+	
+
+end

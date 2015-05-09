@@ -1,0 +1,42 @@
+3D Car supports SCars and TDM Cars.
+
+GOTO lua/autorun/3DCarDealer_AddCars.lua
+
+paste this example.
+
+
+	local TB2Insert = {}
+		TB2Insert.VehicleName = "VEHICLE NAME"
+		TB2Insert.CarName = "CAR PRINT NAME"
+		TB2Insert.CarPrice = 100
+		TB2Insert.CarRefund = 100
+		TB2Insert.IsSCar = true
+		TB2Insert.Description = "DESCRIPTIONS"
+		TB2Insert.AvaliableTeam = {TEAM_POLICE,TEAM_MOB}
+		TB2Insert.AvaliableGroup = {"superadmin","admin"}
+	table.insert(D3DCarConfig.Car,TB2Insert)
+	
+
+	VehicleName :: Its unique name of cars
+			-- HOW TO GET NAMES? --
+			Case 1 : SCars 
+				>> goto SCARADDON/lua/entities/ <random cars folder > / shared.lua
+				you may see like this ' ENT.PrintName		= "Junker1" ' if its right car foder.
+				"Junker1" is Vehicle name.
+				
+			Case 2 : TDM Cars
+				>> goto TDMADDON/lua/autorun/ < random cars lua file >
+				you may see like this ' list.Set("Vehicles", "350ztdm", V) ' 
+				"350ztdm" is Vehicle name.
+				
+	CarName :: Print name of cars. can be seen car shop
+	
+	CarPrice , CarRefund :: you may know these.
+	
+	IsSCar :: < VERY IMPORTANT > if its SCar, set to ' true ' if not, remove it or set to ' false '
+	
+	Description :: Descriptions
+	
+	AvaliableTeam :: You can limit cars specific job only. 
+	
+	AvaliableGroup :: You can limit cars specific ULX Group user. 
