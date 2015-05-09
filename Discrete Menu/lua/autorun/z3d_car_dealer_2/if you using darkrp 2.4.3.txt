@@ -1,3 +1,0 @@
-goto lua/autorun/Customizer.lua
-
-and change line 5. to false.
